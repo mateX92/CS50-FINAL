@@ -82,10 +82,7 @@ def register():
 
      # for POST
     if (request.method == "POST"):
-        # Retrieve the name of the user that is trying to register
-        userCheck = db.execute("SELECT ? from users", [name])
-        check = userCheck.fetchall()
-        currentUser = check[0]
+        userExists = db.execute("SELECT * FROM users WHERE username = ?", [name])
 
         if (not name):
             message = "You need to insert a username"
@@ -96,7 +93,7 @@ def register():
         elif (request.form.get("password") != request.form.get("confirmation")):
             message = "Passwords do not match"
             return render_template("register.html", message=message, users=rows)
-        elif (name == currentUser[0]): # if able to retrieve data with that name from the db it means that such user already exists
+        elif (userExists.fetchall()): # if able to retrieve data with that name from the db it means that such user already exists
             message = "The user already exists."
             return render_template("register.html", message=message, users=rows)
 
@@ -104,6 +101,7 @@ def register():
         else:
             db.execute("INSERT INTO users (username, password) VALUES (?, ?)", (name, generate_password_hash(password,method='sha256')))
             db_con.commit() # to actually insert the data in the db
+
             return redirect(url_for('login'))
 
 

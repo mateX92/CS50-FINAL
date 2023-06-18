@@ -3,7 +3,7 @@ import requests
 import urllib.parse
 import urllib.request, json
 from functools import wraps
-from flask import g
+from flask import g, session
 
 def lookup(movie):
     """Look up movie title."""
@@ -32,7 +32,7 @@ def login_required(f):
     # f is the function for the route you are trying to protect and make accessible only to logged in user!
     @wraps(f) # preserves some metadata of the function to be protected
     def decorated_function(*args, **kwargs):
-        if session["username"] is None: # "Username" comes from login function - maybe it should be placed on top
+        if session.get("username") is None: # "Username" comes from login function - maybe it should be placed on top
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs) # returns the protected route and function and includes any argument that is required for that function!
     return decorated_function
