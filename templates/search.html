@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %} Search {% endblock %}
+
+{% block main %}
+
+    <form method="post">
+        <input type=text name="movieTitle">
+        <input type=submit value=Search>
+    </form>
+
+    {% for movie in movies %}
+    <li> {{ movie }} </li>
+    {% endfor %}
+
+{% endblock %}
