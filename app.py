@@ -15,30 +15,58 @@ db = db_con.cursor()
 # Tell flask what URL should trigger functions
 @app.route("/")
 def index():
-# @login_required
-    dbTest = db.execute("SELECT * from users")
-    print(db.fetchall())
 
     if session:
-        print("Success")
-        logout = "Log Out"
-        return render_template('index.html', logout=logout)
+        message = "Hello, " + session['username'] + "!"
+        return render_template('index.html', welcomeUser=message)
     else:
-        print(session)
         return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    # Forget any user_id
+    session.clear()
+
     if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect(url_for('index'))
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if not username:
+            message = "You need to insert a username"
+            return render_template("login.html", message=message)
+        elif not password:
+            message = "You need to insert a password"
+            return render_template("login.html", message=message)
+        
+        # get the db and query the user that tries to get in
+        users = db.execute("SELECT * FROM users WHERE username = ?", [username])
+        rows = users.fetchall()
+        print(rows)
+        print(len(rows))
+
+        if len(rows) == 0:
+            message = "Invalid username"
+            return render_template("login.html", message=message)
+        elif not check_password_hash(rows[0][2], request.form.get("password")): # 2 is for password as it is stored in 3rd column of users db
+            message = "Invalid password!"
+            return render_template("login.html", message=message)
+        else:
+            session['user_id'] = rows[0][0]
+            session['username'] = rows[0][1]
+            session.modified = True # inform Flask to save the changes to the session
+            return redirect(url_for('index'))
+
     return render_template('login.html')
 
+
 @app.route('/logout')
-# @login_required
+@login_required
+
 def logout():
     # remove the username from the session if it's there
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -47,9 +75,13 @@ def register():
     name = request.form.get("username")
     password = request.form.get("password")
 
+    # just to test
+    test = db.execute("SELECT * from users")
+    rows = test.fetchall()
+    print(rows)
+
      # for POST
     if (request.method == "POST"):
-
         # Retrieve the name of the user that is trying to register
         userCheck = db.execute("SELECT ? from users", [name])
         check = userCheck.fetchall()
@@ -57,25 +89,27 @@ def register():
 
         if (not name):
             message = "You need to insert a username"
-            return render_template("register.html", message=message)
+            return render_template("register.html", message=message, users=rows)
         elif (not password):
             message = "The password is required!"
-            return render_template("register.html", message=message)
+            return render_template("register.html", message=message, users=rows)
         elif (request.form.get("password") != request.form.get("confirmation")):
             message = "Passwords do not match"
-            return render_template("register.html", message=message)
-        elif (name == currentUser[0]):
+            return render_template("register.html", message=message, users=rows)
+        elif (name == currentUser[0]): # if able to retrieve data with that name from the db it means that such user already exists
             message = "The user already exists."
-            return render_template("register.html", message=message)
+            return render_template("register.html", message=message, users=rows)
 
         # if all correct then create the account by adding the data into the table
         else:
             db.execute("INSERT INTO users (username, password) VALUES (?, ?)", (name, generate_password_hash(password,method='sha256')))
-            return redirect("/")
+            db_con.commit() # to actually insert the data in the db
+            return redirect(url_for('login'))
+
 
     # for GET
     else:
-        return render_template("register.html")
+        return render_template("register.html", users=rows)
 
 if __name__ == "__main__":
     app.run()
@@ -92,13 +126,3 @@ def search():
     elif request.method == "GET":        
         return render_template('search.html')
 
-
-# for register
-
-# if method is post
-    # check if the 'name' || password exists in the SQL table
-        # if does not exist
-            # add the user to the database
-        # else
-            # show message that user exists and refresh the page
-# else just generate regular register template

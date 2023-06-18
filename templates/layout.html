@@ -8,13 +8,24 @@
     </head>
     <body>
         <navbar>
+        {% if session['user_id'] %}
+        
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/search">Rate a movie</a></li>
                 <li><a href="TBC">Find people</a></li>
-                <li><a href="/login">Log In</a></li>
-                <li><a href="/logout"> {{ logout }} </a></li>
+                <li><a href="/logout">Log Out</a></li>
             </ul>
+
+        {% else %}
+
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Log In</a></li>
+                <li><a href="/register"> Register </a></li>
+            </ul>
+
+        {% endif %}
         </navbar>
         
         {% block main %}
