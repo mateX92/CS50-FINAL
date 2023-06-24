@@ -141,7 +141,5 @@ def movie():
         if ("poster" in movie):
             if(movie['title'] == request.args.get("url_param")):
                 poster = movie["poster"] # it seems it shows me posters for all the movies
-                print(movie)
-                print(poster)
                 break
     return render_template('movie.html', title=movieTitle, poster=poster)
