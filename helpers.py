@@ -20,13 +20,16 @@ def lookup(movie):
     try:
         movies = []
         quote = response.json()
-        movieResults = quote["results"]
+        movieResults = quote["results"] # all the results (with titles, images, etc.)
         for movie in movieResults:
-            movies.append(movie["title"])
+            movie["poster"] = movie["image"] # add new key-value pair
+            movie["title"] = movie["title"]
+            movies.append(movie) # appends the whole movie together with image and title
         return movies
     except (KeyError, TypeError, ValueError):
         return None
 
+# returns movies array with movie["title"]. I can extract movie["image"] as well to get the poster. Other data may require different API (movie["id"])
 
 def login_required(f):
     # f is the function for the route you are trying to protect and make accessible only to logged in user!

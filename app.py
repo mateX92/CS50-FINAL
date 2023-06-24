@@ -117,10 +117,31 @@ if __name__ == "__main__":
 @app.route("/search", methods=['GET', 'POST'])
 @login_required
 def search():
+
+    movieList = []
+
     if request.method == "POST":
         title = request.form.get('movieTitle')
-        movieArray = lookup(title)
-        return render_template('search.html', movies=movieArray)
-    elif request.method == "GET":        
+        movies = lookup(title)
+        for movie in movies:
+            movieList.append(movie['title'])
+        return render_template('search.html', movies=movieList)
+    elif request.method == "GET":
         return render_template('search.html')
 
+@app.route("/movie", methods=['GET', 'POST'])
+@login_required
+def movie():
+    movieTitle = request.args.get("url_param")
+    checkMovie = lookup(movieTitle)
+
+    poster = None
+
+    for movie in checkMovie:
+        if ("poster" in movie):
+            if(movie['title'] == request.args.get("url_param")):
+                poster = movie["poster"] # it seems it shows me posters for all the movies
+                print(movie)
+                print(poster)
+                break
+    return render_template('movie.html', title=movieTitle, poster=poster)
