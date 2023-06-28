@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %} {{ people }} {% endblock %}
+
+{% block main %}
+
+ 
+
+    <table>
+        <tr>
+            <th> People you will like </th>
+        </tr>
+
+        {% for person in people %}
+        <tr>
+            <td> {{ person }} </td>
+        </tr>
+        {% endfor %}
+        
+    </table>
+
+{% endblock %}

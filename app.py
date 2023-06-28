@@ -136,10 +136,41 @@ def movie():
     checkMovie = lookup(movieTitle)
 
     poster = None
+    details = None
+    message = ""
 
     for movie in checkMovie:
         if ("poster" in movie):
             if(movie['title'] == request.args.get("url_param")):
                 poster = movie["poster"] # it seems it shows me posters for all the movies
+                details = movie["details"]
+                movie_id = movie["id"]
                 break
-    return render_template('movie.html', title=movieTitle, poster=poster)
+
+    entryExists = db.execute("SELECT rating FROM rating WHERE user_id = ? AND movie_id = ?", (session["user_id"], movie_id))
+    fetchEntry = entryExists.fetchall()
+    print(fetchEntry)
+
+    if request.method == "POST":
+        if(fetchEntry):
+            db.execute("UPDATE rating SET rating = ? WHERE user_id = ? AND movie_id = ?", (request.form.get("rates"), session["user_id"], movie_id))
+            message = "New rate given: " + request.form.get("rates")
+        else:
+            db.execute("INSERT INTO rating (user_id, movie_id, rating) VALUES (?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates")))
+            db_con.commit()
+            message = "Rate given: " + request.form.get("rates")
+    elif request.method == "GET":
+        if(fetchEntry):
+            message = "This has already been rated: " + str(fetchEntry[0][0])
+
+    return render_template('movie.html', title=movieTitle, poster=poster, details=details, message=message)
+
+@app.route("/people", methods=['GET'])
+@login_required
+
+def people():
+    # array of people from highest graded to lowest?
+    people = db.execute("SELECT * FROM rating")
+    print(people)
+
+    return render_template('people.html', people=people)

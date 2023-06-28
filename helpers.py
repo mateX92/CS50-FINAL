@@ -24,6 +24,8 @@ def lookup(movie):
         for movie in movieResults:
             movie["poster"] = movie["image"] # add new key-value pair
             movie["title"] = movie["title"]
+            movie["details"] = movie["description"]
+            movie["id"] = movie["id"]
             movies.append(movie) # appends the whole movie together with image and title
         return movies
     except (KeyError, TypeError, ValueError):
