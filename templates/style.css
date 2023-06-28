@@ -1,0 +1,14 @@
+
+#1200px{
+    max-width: 1200px;
+    margin: auto;
+}
+
+body{
+    background-color: black;
+}
+
+section{
+    max-width: 1200px;
+    margin: auto;
+}
