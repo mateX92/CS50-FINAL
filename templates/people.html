@@ -11,9 +11,9 @@
             <th> People you will like </th>
         </tr>
 
-        {% for person in people %}
+        {% for person, points in people.items() %}
         <tr>
-            <td> {{ person }} </td>
+            <td> {{ person }}: {{ points }} </td>
         </tr>
         {% endfor %}
         

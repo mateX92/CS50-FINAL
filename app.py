@@ -23,7 +23,6 @@ def index():
         movies = []
         for row in posters:
             row = row[0]
-            print(row)
             movies.append(row)
         print(movies)
         return render_template('index.html', welcomeUser=message, posters=movies)
@@ -177,7 +176,66 @@ def movie():
 @login_required
 
 def people():
-    # array of people from highest graded to lowest?
-    people = db.execute("SELECT * FROM rating")
 
-    return render_template('people.html', people=people)
+    # fetch your movies
+    currentUser = db.execute("SELECT movie_id, rating FROM rating WHERE user_id = ?", [session["user_id"]])
+    userMovies = currentUser.fetchall()
+    
+    yourMovies = {}
+
+    # Assign all your movies to a dict so it can later be compared against other user's movies
+    for row in userMovies:
+        yourMovies[row[0]] = row[1]
+    print(yourMovies)
+
+    # Create list of users where later points will be assigned
+    faveUsers = {} # {user_id: totalPoints, user_id[1]: totalPoints}
+    usersOnly = db.execute("SELECT username FROM users WHERE user_id IN (SELECT DISTINCT user_id FROM rating WHERE user_id != ?)", [session["user_id"]])
+    userList = usersOnly.fetchall()
+
+    for row in userList:
+        faveUsers[row[0]] = 0
+    print(faveUsers)
+
+    # Fetch from rating all users except yourself and order the movies from highest ratest to lowest
+    people = db.execute("SELECT u.username, r.user_id, r.movie_id, r.rating FROM users u JOIN rating r ON u.user_id = r.user_id WHERE r.user_id != ? ORDER BY rating DESC", [session["user_id"]])
+    otherPeople = people.fetchall()
+
+    for row in otherPeople:
+        if row[2] in yourMovies:
+            # Compare first only movies with 5 points on otherPeople db
+            if row[3] == 5:
+                # If the current user has the same movie with 5 points
+                if row[3] == yourMovies[row[2]]:
+                    # Grant the otherPeople user maximum amount of points (13)
+                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]] + 3 # adding 3 additional points for max points
+                elif row[3] == (yourMovies[row[2]] - 1):
+                    # If you rated the movie but gave it less (4 points), otherPeople user will get points, but less (9 points)
+                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
+            elif row[3] == 4:
+                # In case of otherPeople user's 4 points
+                if row[3] == yourMovies[row[2]]:
+                    # If same amount of points, the user gets 10 points
+                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]] + 2 # adding 2 additional points for almost max
+                elif row[3] == (yourMovies[row[2]] - 1) or row[3] == (yourMovies[row[2]] + 1):
+                    # Otherwise if they gave 4 and you gave 3 or 5, the user will get 7 or 9 points (depending if you gave 3 or 5)
+                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
+            elif row[3] == 3 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
+                # with 3 rating, it will either be 6 points in case of a match or 7 if you gave one more or 5 if you gave one less
+                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
+            elif row[3] == 2 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
+                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
+            elif row[3] == 1 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1):
+                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
+            elif (row[3] - yourMovies[row[2]] > 2) or (row[3] - yourMovies[row[2]] < -2):
+                # Minus 5 points for any movie with big discrepancy of points
+                faveUsers[row[0]] = faveUsers[row[0]] - 5
+
+        else:
+            continue
+
+            # check the algorithm, seems like it doesnt give the same amount of points to Mateusz vs Alejandro and Alejandro vs Mateusz,
+            # for example.
+            # In excel there are some points we gave to the movies to improve it.
+
+    return render_template('people.html', people=faveUsers)
