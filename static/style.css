@@ -1,14 +1,42 @@
 
-#1200px{
-    max-width: 1200px;
-    margin: auto;
-}
-
-body{
-    background-color: black;
-}
-
 section{
+    background-color: yellow;
     max-width: 1200px;
     margin: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#welcome{
+    background-color: red;
+    padding: 8vh;
+}
+
+#movie_info{
+    display: flex;
+    justify-content: space-around;
+}
+
+#movie_details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+img{
+    max-width: 50vh;
+    height: auto;
+}
+
+#rated_movies{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#movie_poster{
+    max-width: 15%;
+    height: auto;
 }

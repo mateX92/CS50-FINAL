@@ -6,8 +6,14 @@
 
 {% block main %}
 
-{{ welcomeUser }}
+<div id="welcome">
+    <p>{{ welcomeUser }} Welcome to the movie lover community, where you can find people with similar taste and chat with them!</p>
+</div>
 
-Welcome to the movie lover community, where you can find people with similar taste and chat with them!
+<div id="rated_movies">
+    {% for poster in posters %}
+    <img id="your_movies" src="{{ poster }}" alt="Poster">
+    {% endfor %}
+</div>
 
 {% endblock %}

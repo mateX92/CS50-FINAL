@@ -5,7 +5,7 @@ from helpers import lookup, login_required
 import sqlite3
 from werkzeug.security import check_password_hash, generate_password_hash
 
-app = Flask(__name__)
+app = Flask(__name__, '/static')
 app.secret_key = key.SECRET_KEY
 
 # Connect to SQL db - to be moved out of index
@@ -18,7 +18,15 @@ def index():
 
     if session:
         message = "Hello, " + session['username'] + "!"
-        return render_template('index.html', welcomeUser=message)
+        posterdb = db.execute("SELECT poster FROM rating WHERE user_id = ?", [session["user_id"]])
+        posters = posterdb.fetchall()
+        movies = []
+        for row in posters:
+            row = row[0]
+            print(row)
+            movies.append(row)
+        print(movies)
+        return render_template('index.html', welcomeUser=message, posters=movies)
     else:
         return render_template('index.html')
 
@@ -142,21 +150,21 @@ def movie():
     for movie in checkMovie:
         if ("poster" in movie):
             if(movie['title'] == request.args.get("url_param")):
-                poster = movie["poster"] # it seems it shows me posters for all the movies
+                poster = movie["poster"]
                 details = movie["details"]
                 movie_id = movie["id"]
                 break
 
     entryExists = db.execute("SELECT rating FROM rating WHERE user_id = ? AND movie_id = ?", (session["user_id"], movie_id))
     fetchEntry = entryExists.fetchall()
-    print(fetchEntry)
 
     if request.method == "POST":
         if(fetchEntry):
-            db.execute("UPDATE rating SET rating = ? WHERE user_id = ? AND movie_id = ?", (request.form.get("rates"), session["user_id"], movie_id))
+            db.execute("UPDATE rating SET rating = ?, poster = ? WHERE user_id = ? AND movie_id = ?", (request.form.get("rates"), poster, session["user_id"], movie_id))
+            db_con.commit()
             message = "New rate given: " + request.form.get("rates")
         else:
-            db.execute("INSERT INTO rating (user_id, movie_id, rating) VALUES (?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates")))
+            db.execute("INSERT INTO rating (user_id, movie_id, rating, poster) VALUES (?, ?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates"), poster))
             db_con.commit()
             message = "Rate given: " + request.form.get("rates")
     elif request.method == "GET":
@@ -171,6 +179,5 @@ def movie():
 def people():
     # array of people from highest graded to lowest?
     people = db.execute("SELECT * FROM rating")
-    print(people)
 
     return render_template('people.html', people=people)
