@@ -177,10 +177,9 @@ def movie():
 
 def people():
 
-    # fetch your movies
+    # Fetch current user's movies and their rating
     currentUser = db.execute("SELECT movie_id, rating FROM rating WHERE user_id = ?", [session["user_id"]])
     userMovies = currentUser.fetchall()
-    
     yourMovies = {}
 
     # Assign all your movies to a dict so it can later be compared against other user's movies
@@ -188,54 +187,46 @@ def people():
         yourMovies[row[0]] = row[1]
     print(yourMovies)
 
-    # Create list of users where later points will be assigned
+    # Create list of other users to which points will be assigned
     faveUsers = {} # {user_id: totalPoints, user_id[1]: totalPoints}
-    usersOnly = db.execute("SELECT username FROM users WHERE user_id IN (SELECT DISTINCT user_id FROM rating WHERE user_id != ?)", [session["user_id"]])
-    userList = usersOnly.fetchall()
+    userListTuple = db.execute("SELECT username FROM users WHERE user_id IN (SELECT DISTINCT user_id FROM rating WHERE user_id != ?)", [session["user_id"]])
+    userList = userListTuple.fetchall()
 
     for row in userList:
         faveUsers[row[0]] = 0
     print(faveUsers)
 
-    # Fetch from rating all users except yourself and order the movies from highest ratest to lowest
+    # Fetch from rating all users except current user and order the movies from highest ratest to lowest
     people = db.execute("SELECT u.username, r.user_id, r.movie_id, r.rating FROM users u JOIN rating r ON u.user_id = r.user_id WHERE r.user_id != ? ORDER BY rating DESC", [session["user_id"]])
-    otherPeople = people.fetchall()
+    peopleList = people.fetchall()
 
-    for row in otherPeople:
+    for row in peopleList:
         if row[2] in yourMovies:
-            # Compare first only movies with 5 points on otherPeople db
-            if row[3] == 5:
-                # If the current user has the same movie with 5 points
-                if row[3] == yourMovies[row[2]]:
-                    # Grant the otherPeople user maximum amount of points (13)
-                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]] + 3 # adding 3 additional points for max points
-                elif row[3] == (yourMovies[row[2]] - 1):
-                    # If you rated the movie but gave it less (4 points), otherPeople user will get points, but less (9 points)
+            # We don't consider 2s and 1s for positive points as they are not very relevant
+            if (row[3] >= 3 and yourMovies[row[2]] >=2) or (row[3] >= 2 and yourMovies[row[2]] >=3):
+                print(f"Row3 is {row[3]} and yourMovies2 is {yourMovies[row[2]]}")
+                # If the rating is the same, triplicate the rating and add to points
+                if row[3] == yourMovies[row[2]]: 
+                    faveUsers[row[0]] = faveUsers[row[0]] + (row[3] * 3)
+                    print(f"Gave {row[3] * 3} points, output: {faveUsers}")
+                # If the rating is almost the same (difference of 1), sum the rating
+                elif row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
                     faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-            elif row[3] == 4:
-                # In case of otherPeople user's 4 points
-                if row[3] == yourMovies[row[2]]:
-                    # If same amount of points, the user gets 10 points
-                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]] + 2 # adding 2 additional points for almost max
-                elif row[3] == (yourMovies[row[2]] - 1) or row[3] == (yourMovies[row[2]] + 1):
-                    # Otherwise if they gave 4 and you gave 3 or 5, the user will get 7 or 9 points (depending if you gave 3 or 5)
-                    faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-            elif row[3] == 3 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
-                # with 3 rating, it will either be 6 points in case of a match or 7 if you gave one more or 5 if you gave one less
-                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-            elif row[3] == 2 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
-                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-            elif row[3] == 1 and row[3] == yourMovies[row[2]] or row[3] == (yourMovies[row[2]] + 1):
-                faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-            elif (row[3] - yourMovies[row[2]] > 2) or (row[3] - yourMovies[row[2]] < -2):
-                # Minus 5 points for any movie with big discrepancy of points
-                faveUsers[row[0]] = faveUsers[row[0]] - 5
-
+                    print(f"Gave {row[3] + yourMovies[row[2]]} points, output: {faveUsers}")
+                # If the rating difference is bigger than 2, provide negative points
+                elif row[3] - yourMovies[row[2]] > 2 or row[3] - yourMovies[row[2]] < -2:
+                    faveUsers[row[0]] = faveUsers[row[0]] - abs((row[3] - yourMovies[row[2]]) * 4)
+                    print(f"Substracted (still higher than 3 and 2) {abs((row[3] - yourMovies[row[2]]) * 4)} points, output: {faveUsers}")
+            else:
+                print(f"Row3 is {row[3]} and yourMovies2 is {yourMovies[row[2]]}")
+                # The rating difference has to apply also for row[3] < 3 (e.g. when row[3] == 1 and yourMovies[row[2]] == 5)
+                if row[3] - yourMovies[row[2]] > 2 or row[3] - yourMovies[row[2]] < -2:
+                    faveUsers[row[0]] = faveUsers[row[0]] - abs((row[3] - yourMovies[row[2]]) * 4)
+                    print(f"Substracted THIS IS THE ELSE CLAUSE {abs((row[3] - yourMovies[row[2]]) * 4)} points, output: {faveUsers}")
         else:
             continue
 
-            # check the algorithm, seems like it doesnt give the same amount of points to Mateusz vs Alejandro and Alejandro vs Mateusz,
-            # for example.
-            # In excel there are some points we gave to the movies to improve it.
+        # Sort the faveUsers{}
+        
 
-    return render_template('people.html', people=faveUsers)
+    return render_template('people.html', people=sortPeople)
