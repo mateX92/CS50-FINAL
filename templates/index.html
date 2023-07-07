@@ -12,7 +12,7 @@
 
 <div id="rated_movies">
     {% for poster in posters %}
-    <img id="movie_poster" class="img-fluid" src="{{ poster }}" alt="Poster">
+    <a href="/movie?url_param={{ movie }}" id="movie_poster"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
     {% endfor %}
 </div>
 

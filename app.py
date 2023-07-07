@@ -18,14 +18,18 @@ def index():
 
     if session:
         message = "Hello, " + session['username'] + "!"
-        posterdb = db.execute("SELECT poster FROM rating WHERE user_id = ?", [session["user_id"]])
+        posterdb = db.execute("SELECT poster, movie_title FROM rating WHERE user_id = ?", [session["user_id"]])
         posters = posterdb.fetchall()
         movies = []
+        titles = []
         for row in posters:
-            row = row[0]
-            movies.append(row)
-        print(movies)
-        return render_template('index.html', welcomeUser=message, posters=movies)
+            poster, title = row
+            poster = poster
+            title = title
+            print(f"Entire poster in posters is {poster} and title is {title}")
+            movies.append(poster)
+            titles.append(title)
+        return render_template('index.html', welcomeUser=message, posters=movies, movie=titles)
     else:
         return render_template('index.html')
 
@@ -50,8 +54,6 @@ def login():
         # get the db and query the user that tries to get in
         users = db.execute("SELECT * FROM users WHERE username = ?", [username])
         rows = users.fetchall()
-        print(rows)
-        print(len(rows))
 
         if len(rows) == 0:
             message = "Invalid username"
@@ -85,7 +87,6 @@ def register():
     # just to test
     test = db.execute("SELECT * from users")
     rows = test.fetchall()
-    print(rows)
 
      # for POST
     if (request.method == "POST"):
@@ -120,7 +121,7 @@ if __name__ == "__main__":
     app.run()
 
 
-# Here you need to get the DB table, not sure how yet, to query from it for your search.
+
 @app.route("/search", methods=['GET', 'POST'])
 @login_required
 def search():
@@ -163,7 +164,7 @@ def movie():
             db_con.commit()
             message = "New rate given: " + request.form.get("rates")
         else:
-            db.execute("INSERT INTO rating (user_id, movie_id, rating, poster) VALUES (?, ?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates"), poster))
+            db.execute("INSERT INTO rating (user_id, movie_id, rating, poster, movie_title) VALUES (?, ?, ?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates"), poster, movie["title"]))
             db_con.commit()
             message = "Rate given: " + request.form.get("rates")
     elif request.method == "GET":
@@ -185,7 +186,6 @@ def people():
     # Assign all your movies to a dict so it can later be compared against other user's movies
     for row in userMovies:
         yourMovies[row[0]] = row[1]
-    print(yourMovies)
 
     # Create list of other users to which points will be assigned
     faveUsers = {} # {user_id: totalPoints, user_id[1]: totalPoints}
@@ -194,7 +194,6 @@ def people():
 
     for row in userList:
         faveUsers[row[0]] = 0
-    print(faveUsers)
 
     # Fetch from rating all users except current user and order the movies from highest ratest to lowest
     people = db.execute("SELECT u.username, r.user_id, r.movie_id, r.rating FROM users u JOIN rating r ON u.user_id = r.user_id WHERE r.user_id != ? ORDER BY rating DESC", [session["user_id"]])
@@ -204,29 +203,23 @@ def people():
         if row[2] in yourMovies:
             # We don't consider 2s and 1s for positive points as they are not very relevant
             if (row[3] >= 3 and yourMovies[row[2]] >=2) or (row[3] >= 2 and yourMovies[row[2]] >=3):
-                print(f"Row3 is {row[3]} and yourMovies2 is {yourMovies[row[2]]}")
                 # If the rating is the same, triplicate the rating and add to points
                 if row[3] == yourMovies[row[2]]: 
                     faveUsers[row[0]] = faveUsers[row[0]] + (row[3] * 3)
-                    print(f"Gave {row[3] * 3} points, output: {faveUsers}")
                 # If the rating is almost the same (difference of 1), sum the rating
                 elif row[3] == (yourMovies[row[2]] + 1) or row[3] == (yourMovies[row[2]] - 1):
                     faveUsers[row[0]] = faveUsers[row[0]] + row[3] + yourMovies[row[2]]
-                    print(f"Gave {row[3] + yourMovies[row[2]]} points, output: {faveUsers}")
                 # If the rating difference is bigger than 2, provide negative points
                 elif row[3] - yourMovies[row[2]] > 2 or row[3] - yourMovies[row[2]] < -2:
                     faveUsers[row[0]] = faveUsers[row[0]] - abs((row[3] - yourMovies[row[2]]) * 4)
-                    print(f"Substracted (still higher than 3 and 2) {abs((row[3] - yourMovies[row[2]]) * 4)} points, output: {faveUsers}")
             else:
-                print(f"Row3 is {row[3]} and yourMovies2 is {yourMovies[row[2]]}")
                 # The rating difference has to apply also for row[3] < 3 (e.g. when row[3] == 1 and yourMovies[row[2]] == 5)
                 if row[3] - yourMovies[row[2]] > 2 or row[3] - yourMovies[row[2]] < -2:
                     faveUsers[row[0]] = faveUsers[row[0]] - abs((row[3] - yourMovies[row[2]]) * 4)
-                    print(f"Substracted THIS IS THE ELSE CLAUSE {abs((row[3] - yourMovies[row[2]]) * 4)} points, output: {faveUsers}")
         else:
             continue
 
-        # Sort the faveUsers{}
-        
+    faveUsersList = faveUsers.items()
+    sortedPeople = sorted(faveUsersList, key=lambda x: x[1], reverse=True)
 
-    return render_template('people.html', people=sortPeople)
+    return render_template('people.html', people=sortedPeople)

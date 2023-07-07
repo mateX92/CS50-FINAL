@@ -29,7 +29,7 @@ img{
     max-width: 50vh;
     height: auto;
 }
-
+ 
 #rated_movies{
     display: flex;
     flex-wrap: wrap;
