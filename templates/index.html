@@ -13,7 +13,10 @@
 {% if session['user_id'] %}
     <div id="rated_movies">
         {% for poster, movie in posters.items() %}
-        <a href="/movie?url_param={{ movie|urlencode }}&url_param2={{ description|urlencode }}" id="movie_poster"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+        <div id="movie_poster">
+            <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+            <p> Rated: {{ movie[2] }} </p>
+        </div>
         {% endfor %}
     </div>
 {% endif %}

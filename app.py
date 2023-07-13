@@ -15,20 +15,18 @@ db = db_con.cursor()
 # Tell flask what URL should trigger functions
 @app.route("/")
 def index():
-    #db.execute("ALTER TABLE rating ADD COLUMN description TEXT")
-    #db.execute("INSERT INTO rating")
-
+  
     if session:
         message = "Hello, " + session['username'] + "!"
-        posterdb = db.execute("SELECT poster, movie_title FROM rating WHERE user_id = ?", [session["user_id"]])
+
+        posterdb = db.execute("SELECT poster, movie_title, description, rating FROM rating WHERE user_id = ?", [session["user_id"]])
         posters = posterdb.fetchall()
  
         # Create a dictionary with poster: title value pair in order to populate the poster and be able to click on it to get to the movie's page
         movies = {}
         for row in posters:
-            print(row)
-            poster, title = row
-            movies[poster] = title
+            poster, title, description, rating = row
+            movies[poster] = [title, description, rating]
 
         return render_template('index.html', welcomeUser=message, posters=movies)
     else:
@@ -143,9 +141,6 @@ def search():
 @login_required
 def movie():
     movieTitle = request.args.get("url_param")
-    movieDescr = request.args.get("url_param2")
-    print(f"KURWA {movieDescr}")
-    #
     checkMovie = lookup(movieTitle)
 
     poster = None
@@ -169,7 +164,7 @@ def movie():
             db_con.commit()
             message = "New rate given: " + request.form.get("rates")
         else:
-            db.execute("INSERT INTO rating (user_id, movie_id, rating, poster, movie_title) VALUES (?, ?, ?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates"), poster, movie["title"]))
+            db.execute("INSERT INTO rating (user_id, movie_id, rating, poster, movie_title, description) VALUES (?, ?, ?, ?, ?, ?)", (session["user_id"], movie_id, request.form.get("rates"), poster, movie["title"], details))
             db_con.commit()
             message = "Rate given: " + request.form.get("rates")
     elif request.method == "GET":
@@ -228,3 +223,49 @@ def people():
     sortedPeople = sorted(faveUsersList, key=lambda x: x[1], reverse=True)
 
     return render_template('people.html', people=sortedPeople)
+
+@app.route('/person')
+@login_required
+
+def person():
+
+    username = request.args.get("url_param")
+    posterdb = db.execute("SELECT poster, movie_title, description, rating FROM rating WHERE user_id IN (SELECT user_id FROM users WHERE username = ?) ORDER BY rating DESC", [username])
+    posters = posterdb.fetchall()
+ 
+    # Create a dictionary with poster: title value pair in order to populate the poster and be able to click on it to get to the movie's page
+    movies = {}
+    for row in posters:
+        poster, title, description, rating = row
+        movies[poster] = [title, description, rating]
+    
+    return render_template('person.html', username=username,posters=movies)
+
+@app.route('/message', methods=['POST', 'GET'])
+@login_required
+
+def message():
+
+    # Get the recipient's username 
+    recipient = request.args.get("url_param")
+
+    # If GET, show messages sent from current user to the selected user
+    # TO FIX: the db is done wrong, I can see from Mateusz's profile what he sends to Alejandro, but not the other way around!
+    # So basically I have a db with SENDER as username and RECEIVER as recipient_name
+    # GET obtaines a db, but only the ones from SENDER (where user_id = ?)
+    # so adding OR user_id = ? AND recipient_name = ? 
+    # recipient in this case would be Mateusz, we are in his link. But Mateusz has never been a recipient and is still a sender
+    # So how do I view messages where Mateusz is sender and Alejandro is recipient
+    if request.method == 'GET':
+        messageCheck = db.execute("SELECT user_id, username, recipient_name, message, date FROM new_messages WHERE user_id = ? AND recipient_name = ? OR recipient_name = ? AND username = ? ORDER BY date ASC", (session["user_id"], recipient, session["username"], request.args.get("url_param")))
+        messages = messageCheck.fetchall()
+        print(messages)
+        return render_template('message.html', username=recipient, messages=messages)
+    
+    # If POST, insert the message to the db with current user's data
+    if request.method == 'POST':
+        timeCheck = db.execute("SELECT CURRENT_TIMESTAMP")
+        time = timeCheck.fetchall()
+        db.execute("INSERT INTO new_messages (user_id, username, recipient_name, message, date) VALUES (?, ?, ?, ?, ?)", (session["user_id"], session["username"], recipient, request.form.get("newMessage"), time[0][0]))
+        db_con.commit()
+        return redirect('message?url_param='+recipient)

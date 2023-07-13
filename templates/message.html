@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %} Conversation {% endblock %}
+
+{% block main %}
+
+Messaging with: {{ username }}
+
+{% for message in messages %}
+    <div id="message">
+        <div><h5> {{ message[1] }} </h5></div>
+        <div><p> {{ message[3] }} </p></div>
+        <div><h6> {{ message[4] }} </h6></div>
+    </div>
+{% endfor %}
+
+<form method="post">
+    <input type="text" name="newMessage" placeholder="Write a message">
+    <input type=submit value=Send class="btn btn-primary">
+</form>
+
+{% endblock %}

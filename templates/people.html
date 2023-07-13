@@ -13,9 +13,9 @@
 
         {% for person, points in people %}
         <tr>
-            <td><a class="nav-link" href="/person"> {{ person }} </a></td> 
+            <td><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} </a></td> 
             <td> {{ points }} </td>
-            <td> message </td>
+            <td> <a href='/message?url_param={{ person|urlencode }}'>message<a> </td>
         </tr>
         {% endfor %}
         

@@ -1,7 +1,19 @@
 {% extends "layout.html" %}
 
-{% block title %} Main {% endblock %}
+{% block title %} New Friend {% endblock %}
 
 {% block main %}
+
+<h1> User: {{ username }} </h1>
+<p> Movies that {{ username }} rated: <p>
+
+<div id="rated_movies">
+    {% for poster, movie in posters.items() %}
+    <div id="movie_poster">
+        <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+        <p> Rated: {{ movie[2] }}</p>
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
