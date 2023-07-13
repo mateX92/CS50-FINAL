@@ -13,7 +13,9 @@
 
         {% for person, points in people %}
         <tr>
-            <td> {{ person }}: {{ points }} </td>
+            <td><a class="nav-link" href="/person"> {{ person }} </a></td> 
+            <td> {{ points }} </td>
+            <td> message </td>
         </tr>
         {% endfor %}
         

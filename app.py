@@ -15,21 +15,22 @@ db = db_con.cursor()
 # Tell flask what URL should trigger functions
 @app.route("/")
 def index():
+    #db.execute("ALTER TABLE rating ADD COLUMN description TEXT")
+    #db.execute("INSERT INTO rating")
 
     if session:
         message = "Hello, " + session['username'] + "!"
         posterdb = db.execute("SELECT poster, movie_title FROM rating WHERE user_id = ?", [session["user_id"]])
         posters = posterdb.fetchall()
-        movies = []
-        titles = []
+ 
+        # Create a dictionary with poster: title value pair in order to populate the poster and be able to click on it to get to the movie's page
+        movies = {}
         for row in posters:
+            print(row)
             poster, title = row
-            poster = poster
-            title = title
-            print(f"Entire poster in posters is {poster} and title is {title}")
-            movies.append(poster)
-            titles.append(title)
-        return render_template('index.html', welcomeUser=message, posters=movies, movie=titles)
+            movies[poster] = title
+
+        return render_template('index.html', welcomeUser=message, posters=movies)
     else:
         return render_template('index.html')
 
@@ -126,21 +127,25 @@ if __name__ == "__main__":
 @login_required
 def search():
 
-    movieList = []
+    movieList = {}
 
     if request.method == "POST":
         title = request.form.get('movieTitle')
         movies = lookup(title)
         for movie in movies:
-            movieList.append(movie['title'])
+            movieList[movie["details"]] = movie["title"]
         return render_template('search.html', movies=movieList)
     elif request.method == "GET":
-        return render_template('search.html')
+        return render_template('search.html', movies=movieList)
+
 
 @app.route("/movie", methods=['GET', 'POST'])
 @login_required
 def movie():
     movieTitle = request.args.get("url_param")
+    movieDescr = request.args.get("url_param2")
+    print(f"KURWA {movieDescr}")
+    #
     checkMovie = lookup(movieTitle)
 
     poster = None
@@ -149,7 +154,7 @@ def movie():
 
     for movie in checkMovie:
         if ("poster" in movie):
-            if(movie['title'] == request.args.get("url_param")):
+            if(movie['details'] == request.args.get("url_param2")):
                 poster = movie["poster"]
                 details = movie["details"]
                 movie_id = movie["id"]

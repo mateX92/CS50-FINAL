@@ -31,8 +31,6 @@ def lookup(movie):
     except (KeyError, TypeError, ValueError):
         return None
 
-# returns movies array with movie["title"]. I can extract movie["image"] as well to get the poster. Other data may require different API (movie["id"])
-
 def login_required(f):
     # f is the function for the route you are trying to protect and make accessible only to logged in user!
     @wraps(f) # preserves some metadata of the function to be protected

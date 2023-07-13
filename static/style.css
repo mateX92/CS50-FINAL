@@ -1,4 +1,4 @@
-
+/* SHARED LAYOUT WEB */
 section{
     background-color: yellow;
     max-width: 1200px;
@@ -9,11 +9,13 @@ section{
     justify-content: space-between;
 }
 
+/* INDEX */
 #welcome{
     background-color: red;
     padding: 8vh;
 }
 
+/* MOVIE */
 #movie_info{
     display: flex;
     justify-content: space-around;
@@ -25,6 +27,7 @@ section{
     justify-content: space-around;
 }
 
+/* IMG */
 img{
     max-width: 50vh;
     height: auto;

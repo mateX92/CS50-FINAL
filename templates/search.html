@@ -6,11 +6,13 @@
 
     <form method="post">
         <input type=text name="movieTitle">
-        <input type=submit value=Search>
+        <input type=submit value=Search class="btn btn-primary">
     </form>
 
-    {% for movie in movies %}
-    <li><a href="/movie?url_param={{ movie }}"> {{ movie }} </a></li>
-    {% endfor %}
+    <ul class="list-group list-group-flush">
+        {% for description, title in movies.items() %}
+        <li class="list-group-item"><a href="/movie?url_param={{ title|urlencode }}&url_param2={{ description|urlencode }}"> {{ title }} - {{ description }}</a></li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
