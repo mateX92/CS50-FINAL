@@ -1,7 +1,7 @@
 /* SHARED LAYOUT WEB */
 section{
-    background-color: yellow;
-    max-width: 1200px;
+    background-color: #1a1a1a;;
+    max-width: 80%;
     margin: auto;
     min-height: 100vh;
     display: flex;
@@ -9,10 +9,66 @@ section{
     justify-content: space-between;
 }
 
+footer{
+    height: 20vh;
+    background-color: white;
+}
+
+.header{
+    color: rgb(255, 255, 255);
+    padding-left: 10%;
+    padding-bottom: 2%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+/* FORMS */
+
+.forms{
+    display: flex;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+#search_form{
+    width: 50%;
+    margin: auto;
+}
+
+#search_result{
+    margin-top: 2%;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
 /* INDEX */
 #welcome{
-    background-color: red;
     padding: 8vh;
+    min-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#welcome p{
+    color: white;
+    font-size: 1.2em;
+}
+
+nav {
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+nav ul li a{
+    color: #dfe36a;
+    text-decoration: none;
+}
+
+nav ul li:hover a{
+    color: #eff2a4;
+    text-decoration: none;
 }
 
 /* MOVIE */
@@ -34,12 +90,97 @@ img{
 }
  
 #rated_movies{
+    background-color: white;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
+    padding: 2% 20% 2% 20%;
+
 }
 
 #movie_poster{
-    max-width: 15%;
+    max-width: 30%;
     height: auto;
+    overflow: hidden; /* clip the excess when child gets bigger than parent */
+}
+
+#movie_poster img{
+    transition: transform .4s;   /* smoother zoom */
+}
+
+#movie_poster:hover img{
+    transform: scale(1.1);
+}
+
+/* PEOPLE */
+
+#people_table tr td{
+    padding-left: 10%;
+}
+
+/* MESSAGE */
+
+#chat{
+    background-color: white;
+    padding: 2% 15% 2% 15%;
+}
+
+.chat_name_div{
+    color: #797979;
+    font-size: 0.9em;
+    margin-bottom: 0;
+}
+
+.chat_name_div h5{
+    margin-bottom: 1%;
+    margin-top: 2%;
+}
+
+.message_date_div h6{
+    color: #acacac;
+    font-size: 0.7em;
+    margin: 0;
+}
+
+/* MY MESSAGES */
+
+#my_message {
+    max-width: 60%; /* puts the user's message cloud on the left */
+}
+
+#my_message .message_div p{
+    display: table;
+    background-color: #dfe36a;
+    padding: 4%;
+    font-size: 1.2em;
+    border-radius: 0 30px 30px 30px;
+    max-width: 100%;
+    margin-bottom: 1%;
+}
+
+/* OTHER USER MESSAGE */
+
+#not_my_message{
+    margin-left: auto;
+    max-width: 60%;
+    text-align: right;
+}
+
+#not_my_message .message_div p{
+    display: table;
+    background-color: #b9b9b9;
+    padding: 4%;
+    font-size: 1.2em;
+    border-radius: 30px 0 30px 30px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-bottom: 1%;
+}
+
+#not_my_message .chat_name_div h5{
+    margin-left: auto;
+}
+
+#not_my_message .message_date_div{
+    margin-left: auto;
 }

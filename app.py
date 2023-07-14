@@ -249,13 +249,6 @@ def message():
     # Get the recipient's username 
     recipient = request.args.get("url_param")
 
-    # If GET, show messages sent from current user to the selected user
-    # TO FIX: the db is done wrong, I can see from Mateusz's profile what he sends to Alejandro, but not the other way around!
-    # So basically I have a db with SENDER as username and RECEIVER as recipient_name
-    # GET obtaines a db, but only the ones from SENDER (where user_id = ?)
-    # so adding OR user_id = ? AND recipient_name = ? 
-    # recipient in this case would be Mateusz, we are in his link. But Mateusz has never been a recipient and is still a sender
-    # So how do I view messages where Mateusz is sender and Alejandro is recipient
     if request.method == 'GET':
         messageCheck = db.execute("SELECT user_id, username, recipient_name, message, date FROM new_messages WHERE user_id = ? AND recipient_name = ? OR recipient_name = ? AND username = ? ORDER BY date ASC", (session["user_id"], recipient, session["username"], request.args.get("url_param")))
         messages = messageCheck.fetchall()

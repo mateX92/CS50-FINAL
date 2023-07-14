@@ -4,15 +4,17 @@
 
 {% block main %}
 
-    <form method="post">
-        <input type=text name="movieTitle">
+    <form method="post" class="forms" id="search_form">
+        <input type=text name="movieTitle" class="form-control" id="formGroupExampleInput">
         <input type=submit value=Search class="btn btn-primary">
     </form>
 
-    <ul class="list-group list-group-flush">
-        {% for description, title in movies.items() %}
-        <li class="list-group-item"><a href="/movie?url_param={{ title|urlencode }}&url_param2={{ description|urlencode }}"> {{ title }} - {{ description }}</a></li>
-        {% endfor %}
-    </ul>
+    <div id="search_result">
+        <ul class="list-group list-group-flush">
+            {% for description, title in movies.items() %}
+            <li class="list-group-item"><a href="/movie?url_param={{ title|urlencode }}&url_param2={{ description|urlencode }}"> {{ title }} - {{ description }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
 
 {% endblock %}

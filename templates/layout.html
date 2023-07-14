@@ -11,40 +11,40 @@
     <body>
 
         <section id="1200px">
-            <navbar>
-                <ul class="nav justify-content-center">
+            <nav>
+                <ul class="nav nav-pills nav-fill">
 
                     {% if session['user_id'] %}
 
                     <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
+                        <a class="navhref" href="/">HOME</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="/search">Rate a movie</a>
+                        <a class="navhref" href="/search">RATE A MOVIE</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="/people">Find people</a>
+                        <a class="navhref" href="/people">FIND PEOPLE</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="/logout">Log Out</a>
+                        <a class="navhref" href="/logout">LOG OUT</a>
                     </li>
 
                     {% else %}
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="navhref" href="/">HOME</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Log In</a>
+                        <a class="navhref" href="/login">LOG IN</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
+                        <a class="navhref" href="/register">REGISTER</a>
                     </li>
 
                     {% endif %}
 
                 </ul>
-            </navbar>
+            </nav>
             
             {% block main %}
             {% endblock %}
