@@ -4,28 +4,18 @@
 
 {% block main %}
 
-{{ message }}
-
-<form action="/register" method="post">
-    <input type=text placeholder="Username" name="username">
-    <input type=password placeholder="Password" name="password">
-    <input type=password placeholder="Confirm Password" name="confirmation">
-    <input type=submit value=Register>
+<form action="/register" method="post" class="login_form">
+    <div class="row">
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" name="username">
+        <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="password">
+        <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" name="confirmation">
+        <input type=submit value=Register class="btn btn-primary" id="registerBtn">
+    </div>
+    {% if message %}
+    <div class="alert alert-dark" role="alert" >
+        {{ message }}
+    </div>
+{% endif %}
 </form>
-
-<table>
-    <tr>
-        <th>Username</th>
-        <!-- Add more column headers as needed -->
-    </tr>
-
-    {% for row in users %}
-    <tr>
-        <td>{{ row }}</td>
-        <!-- Access other columns using row['column_name'] -->
-    </tr>
-    {% endfor %}
-
-</table>
 
 {% endblock %}

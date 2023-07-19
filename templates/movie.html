@@ -9,7 +9,7 @@
         <h1>{{ title }}</h1>
         <p>Details: {{ details }}</p>
         <form method="post">
-            <label for="rate">Rate:</label>
+            <label for="rate"></label>
                 <select name="rates" id="rates">
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -17,9 +17,13 @@
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select> 
-                <input type=submit value="Rate">
+                <input type=submit value="Rate" class="btn btn-primary">
         </form>
-        {{ message }}
+        {% if message %}
+        <span id="alert"> 
+            {{ message }}
+        </span>
+        {% endif %}
     </div>
 
     <img src="{{ poster }}" alt="Movie Poster">

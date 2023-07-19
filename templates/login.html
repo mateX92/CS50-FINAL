@@ -4,10 +4,29 @@
 
 {% block main %}
 
-<form method="post">
-    <input type=text placeholder="Username" name="username">
-    <input type=password placeholder="Password" name="password">
-    <input type=submit value=Login>
+{% if pleaseMessage %}
+<div class="alert alert-dark" role="alert">
+    {{ pleaseMessage }}
+</div>
+{% endif %}
+
+<form method="post" class="login_form">
+    <div class="row">
+        <span id="login-alert">Please enter your login details below.</span>
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" name="username">
+        <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="password">
+        <input type=submit value=Login class="btn btn-primary">
+    </div>
+
+    {% if message %}
+    <div class="alert alert-dark" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
 </form>
+
+<script>
+
+</script>
 
 {% endblock %}

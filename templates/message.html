@@ -4,27 +4,27 @@
 
 {% block main %}
 
-<h3 class="header">Messaging with: {{ username }} </h3>
-
 <div id="chat">
-{% for message in messages %}
-    {% if session["user_id"] == message[0] %}
-        <div id="my_message">
-            <div class="chat_name_div"><h5 class="chat_name"> {{ message[1] }} </h5></div>
-            <div class="message_div"><p> {{ message[3] }} </p></div>
-            <div class="message_date_div"><h6> {{ message[4] }} </h6></div>
-        </div>
-    {% else %}
-        <div id="not_my_message">
-            <div class="chat_name_div"><h5 class="chat_name"> {{ message[1] }} </h5></div>
-            <div class="message_div"><p> {{ message[3] }} </p></div>
-            <div class="message_date_div"><h6> {{ message[4] }} </h6></div>
-        </div>
-    {% endif %}
-{% endfor %}
+    <div id="scroll">
+        {% for message in messages %}
+            {% if session["user_id"] == message[0] %}
+                <div id="my_message">
+                    <div class="chat_name_div"><h5 class="chat_name"> {{ message[1] }} </h5></div>
+                    <div class="message_div"><p> {{ message[3] }} </p></div>
+                    <div class="message_date_div"><h6> {{ message[4] }} </h6></div>
+                </div>
+            {% else %}
+                <div id="not_my_message">
+                    <div class="chat_name_div"><h5 class="chat_name"> {{ message[1] }} </h5></div>
+                    <div class="message_div"><p> {{ message[3] }} </p></div>
+                    <div class="message_date_div"><h6> {{ message[4] }} </h6></div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
     <form method="post" class="forms" id="chat_form">
-        <input type="text" name="newMessage" placeholder="Write a message" class="form-control" id="formGroupExampleInput">
+        <input type="text" name="newMessage" placeholder="Write a message to {{ username }}" class="form-control" id="formGroupExampleInput">
         <input type=submit value=Send class="btn btn-primary">
     </form>
 </div>

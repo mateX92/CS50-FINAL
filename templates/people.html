@@ -1,18 +1,19 @@
 {% extends "layout.html" %}
 
-{% block title %} {{ people }} {% endblock %}
+{% block title %} People you may like {% endblock %}
 
 {% block main %}
 
 <div id="people_div">
-    <h3 class="header"> People you will like </h3>
+    <h3 class="header"> Other user vs your preferences </h3>
 
     <table id="people_table" class="table table-dark table-striped table-hover">
         {% for person, points in people %}
         <tr>
-            <td><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} </a></td> 
-            <td> {{ points }} </td>
-            <td> <a href='/message?url_param={{ person|urlencode }}'>message<a> </td>
+            <td id="person"><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} </a></td> 
+            <td id="points"> {{ points }} </td>
+            <td> <a id="chat-icon" href='/message?url_param={{ person|urlencode }}'><span class="material-symbols-outlined">chat </span></a></td>
+                
         </tr>
         {% endfor %}
         

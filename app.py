@@ -55,7 +55,7 @@ def login():
         rows = users.fetchall()
 
         if len(rows) == 0:
-            message = "Invalid username"
+            message = "Invalid username!"
             return render_template("login.html", message=message)
         elif not check_password_hash(rows[0][2], request.form.get("password")): # 2 is for password as it is stored in 3rd column of users db
             message = "Invalid password!"
@@ -250,9 +250,8 @@ def message():
     recipient = request.args.get("url_param")
 
     if request.method == 'GET':
-        messageCheck = db.execute("SELECT user_id, username, recipient_name, message, date FROM new_messages WHERE user_id = ? AND recipient_name = ? OR recipient_name = ? AND username = ? ORDER BY date ASC", (session["user_id"], recipient, session["username"], request.args.get("url_param")))
+        messageCheck = db.execute("SELECT user_id, username, recipient_name, message, date FROM new_messages WHERE user_id = ? AND recipient_name = ? OR recipient_name = ? AND username = ? ORDER BY date DESC", (session["user_id"], recipient, session["username"], request.args.get("url_param")))
         messages = messageCheck.fetchall()
-        print(messages)
         return render_template('message.html', username=recipient, messages=messages)
     
     # If POST, insert the message to the db with current user's data

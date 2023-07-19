@@ -10,11 +10,13 @@
     </form>
 
     <div id="search_result">
-        <ul class="list-group list-group-flush">
-            {% for description, title in movies.items() %}
-            <li class="list-group-item"><a href="/movie?url_param={{ title|urlencode }}&url_param2={{ description|urlencode }}"> {{ title }} - {{ description }}</a></li>
-            {% endfor %}
-        </ul>
+        <div id="scroll_search">
+            <ul class="list-group list-group-flush">
+                {% for description, title in movies.items() %}
+                <li class="list-group-item"><a href="/movie?url_param={{ title|urlencode }}&url_param2={{ description|urlencode }}" id="search_link"> {{ title }} - <p id="description">{{ description }} </p></a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
 {% endblock %}
