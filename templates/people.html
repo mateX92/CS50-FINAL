@@ -10,10 +10,17 @@
     <table id="people_table" class="table table-dark table-striped table-hover">
         {% for person, points in people %}
         <tr>
+            {% if person == firstperson and points > 15 %}
+            <td id="person"><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} <span class="material-symbols-outlined satisfied">sentiment_very_satisfied</span></a></td> 
+           {% elif person != firstperson and points > 15 %}
+           <td id="person"><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} <span class="material-symbols-outlined satisfied">sentiment_satisfied</span></a></td> 
+           {% elif points < 0 %}
+           <td id="person"><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} <span class="material-symbols-outlined dissatisfied">sentiment_dissatisfied</span></a></td> 
+           {% else %}
             <td id="person"><a class="nav-link" href="/person?url_param={{ person|urlencode }}"> {{ person }} </a></td> 
+            {% endif %}
             <td id="points"> {{ points }} </td>
-            <td> <a id="chat-icon" href='/message?url_param={{ person|urlencode }}'><span class="material-symbols-outlined">chat </span></a></td>
-                
+            <td> <a id="chat-icon" href='/message?url_param={{ person|urlencode }}'><span class="material-symbols-outlined">chat </span></a></td>      
         </tr>
         {% endfor %}
         

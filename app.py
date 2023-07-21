@@ -221,8 +221,9 @@ def people():
 
     faveUsersList = faveUsers.items()
     sortedPeople = sorted(faveUsersList, key=lambda x: x[1], reverse=True)
+    firstPerson = sortedPeople[0][0]
 
-    return render_template('people.html', people=sortedPeople)
+    return render_template('people.html', people=sortedPeople, firstperson=firstPerson)
 
 @app.route('/person')
 @login_required

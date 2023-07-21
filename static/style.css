@@ -303,6 +303,14 @@ img{
     color: #dfe36a;
 }
 
+.satisfied{
+    color: #6ae382;
+}
+
+.dissatisfied{
+    color: #e36a6a;
+}
+
 #points{
     text-align: left;
     font-weight: 700;
