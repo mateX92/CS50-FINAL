@@ -8,21 +8,16 @@
     <div id="movie_details">
         <h1>{{ title }}</h1>
         <p>Details: {{ details }}</p>
-        <form method="post">
+        <form method="post" id="rates">
+            <p id="rate-p"><b>Rate the movie</b></p>
             <label for="rate"></label>
-                <select name="rates" id="rates">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select> 
-                <input type=submit value="Rate" class="btn btn-primary">
-                <span class="material-symbols-outlined star" id="star1">star</span>
-                <span class="material-symbols-outlined star" id="star2">star</span>
-                <span class="material-symbols-outlined star" id="star3">star</span>
-                <span class="material-symbols-outlined star" id="star4">star</span>
-                <span class="material-symbols-outlined star" id="star5">star</span>
+                <div>
+                    <button type="submit" name="rates" class="star-button" value="1"><span class="material-symbols-outlined star" id="star1">star</span>
+                    <button type="submit" name="rates" class="star-button" value="2"><span class="material-symbols-outlined star" id="star2">star</span>
+                    <button type="submit" name="rates" class="star-button" value="3"><span class="material-symbols-outlined star" id="star3">star</span>
+                    <button type="submit" name="rates" class="star-button" value="4"><span class="material-symbols-outlined star" id="star4">star</span>
+                    <button type="submit" name="rates" class="star-button" value="5"><span class="material-symbols-outlined star" id="star5">star</span>
+                </div> 
         </form>
         {% if message %}
         <span id="alert"> 
@@ -34,5 +29,7 @@
     <img src="{{ poster }}" alt="Movie Poster">
 
 </div>
+
+<script src="../static/functions.js"></script>
 
 {% endblock %}
