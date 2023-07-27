@@ -15,25 +15,27 @@
     </div>
 </div>
 
+
+
 {% if session['user_id'] %}
-    <div id="rated_movies">
-        {% if not posters.items() %}
-        <div id="not_found">
-            <p> You do not have any rated movies yet.</p>
-            <img src="https://images.unsplash.com/photo-1621508638997-e30808c10653?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" alt="Movies not found">
-        </div>
-        {% else %}
-            {% for poster, movie in posters.items() %}
-                <div id="movie_poster">
-                    <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
-                    <div class="card-body">
-                        <h5 class="card-subtitle mb-2 text-body-secondary"> {{ movie[0] }}</h5>
-                        <p class="card-text">Rated: {{ movie[2] }}</p>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
+<div id="rated_movies">
+    {% if not posters.items() %}
+    <div id="not_found">
+        <p> You do not have any rated movies yet.</p>
+        <img src="https://images.unsplash.com/photo-1621508638997-e30808c10653?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" alt="Movies not found">
     </div>
+    {% else %}
+        {% for poster, movie in posters.items() %}
+            <div id="movie_poster">
+                <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+                <div class="card-body">
+                    <h5 class="card-subtitle mb-2 text-body-secondary"> {{ movie[0] }}</h5>
+                    <p class="card-text">Rated: {{ movie[2] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
 {% endif %}
 
 {% endblock %}

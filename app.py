@@ -15,7 +15,6 @@ db = db_con.cursor()
 # Tell flask what URL should trigger functions
 @app.route("/")
 def index():
-  
     if session:
         message = "Hello, " + session['username'] + "!"
 
@@ -262,3 +261,44 @@ def message():
         db.execute("INSERT INTO new_messages (user_id, username, recipient_name, message, date) VALUES (?, ?, ?, ?, ?)", (session["user_id"], session["username"], recipient, request.form.get("newMessage"), time[0][0]))
         db_con.commit()
         return redirect('message?url_param='+recipient)
+
+@app.route('/profile', methods=['POST', 'GET'])
+@login_required
+
+def profile():
+
+    if request.method == 'POST':
+        if request.form.get('gender'):
+            print('gender actioned')
+            db.execute("UPDATE users SET gender = ? WHERE user_id = ?", (request.form.get('gender'), session["user_id"]))
+            db_con.commit()
+        if request.form.get('description'):
+            db.execute("UPDATE users SET description = ? WHERE user_id = ?", (request.form.get('description'), session["user_id"]))
+            db_con.commit()
+        if request.form.get('genres'):
+            # Select to see if the currect genre is already in db
+            checkGenres = db.execute("SELECT genre FROM genres WHERE genre = ? AND user_id = ?", [request.form.get('genres'), session["user_id"]])
+            checkGenresFetch = checkGenres.fetchall()
+
+            # If it is and user clicks on it again, it should be deleted from db
+            if checkGenresFetch:
+                db.execute("DELETE FROM genres WHERE genre = ? AND user_id = ?", [request.form.get('genres'), session["user_id"]])
+                db_con.commit()
+            # Else add genre to favourite of that user
+            else:
+                db.execute("CREATE TABLE IF NOT EXISTS genres(user_id INTEGER, genre TEXT, FOREIGN KEY (user_id) REFERENCES users (user_id))")
+                db.execute("INSERT INTO genres (user_id, genre) VALUES (?, ?)", (session["user_id"], request.form.get('genres')))
+                db_con.commit()
+
+    genderCheck = db.execute('SELECT gender FROM users WHERE user_id = ?', [session["user_id"]])
+    gender = genderCheck.fetchall()
+    gender = gender[0][0]
+
+    descriptionCheck = db.execute('SELECT description FROM users WHERE user_id = ?', [session["user_id"]])
+    description = descriptionCheck.fetchall()
+    description = description[0][0]
+
+    GenresCheck = db.execute('SELECT genre FROM genres WHERE user_id = ?', [session["user_id"]])
+    genres = GenresCheck.fetchall()
+      
+    return render_template('profile.html', gender=gender, description=description, genres=genres)

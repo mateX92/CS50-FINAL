@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %} Profile {% endblock %}
+
+{% block main %}
+
+<div id="profile-page">
+    <div id="gender-div" class="profile-div">
+        <p class="profile-headers">1 Choose your gender</p>
+        <form method="post">
+            <select name="gender" id="gender">
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Transgender">Transgender</option>
+                <option value="Non-binary/non-conforming">Non-binary/non-conforming</option>
+                <option value="Prefer not to respond">Prefer not to respond</option>
+            </select> 
+            <button type="submit">Submit</button>
+        </form>
+        <p class="profile-text"> Gender: {{ gender }} </p>
+    </div>
+
+    <div id="your-description" class="profile-div">
+        <p class="profile-headers">2 Provide details about yourself for other users to read and get to know you better! </p>
+        <form method="post" name="description">
+            <input type="text" name="description">
+            <button type="submit">Submit</button>
+        </form>
+
+        <p class="profile-text"> {{ description }} </p>
+    </div>
+
+    <div class="profile-div">
+        <form method="post">
+            <label for="genres" class="profile-headers">3 Select your favourite genres</label>
+            <div id="genre-buttons">
+                <button type="submit" name="genres" class="genre-button" value="Action"><span>Action</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Comedy"><span>Comedy</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Drama"><span>Drama</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Fantasy"><span>Fantasy</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Sci-Fi"><span>Sci-Fi</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Horror"><span>Horror</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Mystery"><span>Mystery</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Romance"><span>Romance</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Thriller"><span>Thriller</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Western"><span>Western</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Sports"><span>Sports</span></button>
+                <button type="submit" name="genres" class="genre-button" value="Adventure"><span>Adventure</span></button>
+            </div> 
+        </form>
+
+        <p class="profile-headers"> {{ genres}} </p>
+    </div>
+</div>
+
+{% endblock %}
