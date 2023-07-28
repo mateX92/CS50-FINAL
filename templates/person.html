@@ -4,20 +4,57 @@
 
 {% block main %}
 
-<h3 class="header"> User: {{ username }} </h3>
-
-<p class="regular_p"> Movies that {{ username }} rated: <p>
-
-<div id="rated_movies">
-    {% for poster, movie in posters.items() %}
-    <div id="movie_poster">
-        <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
-        <div class="card-body">
-            <h5 class="card-subtitle mb-2 text-body-secondary"> {{ movie[0] }}</h5>
-            <p class="card-text">Rated: {{ movie[2] }}</p>
-        </div>
+<div id="user-data">
+    <h3> User: {{ username }} </h3>
+    <div id="user-details">
+        {% if gender %}
+        <p class="user-details-item"> {{ gender }} </p>
+        {% endif %}
+        <div id="chosen-genres" class="user-details-item">
+            {% if genres %}
+                {% for genre in genres %}
+                <span>{{ genre[0] }}</span>
+                {% endfor %}
+            {% else %}
+            <p> No genres selected yet. </p>
+            {% endif %}
+            </div>
+        {% if description %}
+        <p class="user-details-item"><i>"{{ description}}"</i></p>
+        {% else %}
+        <p class="user-details-item"> The username has not provided any description yet. </p>
+        {% endif %}
     </div>
-    {% endfor %}
+</div>
+
+<div class="rated_movies_div">
+    <p class="rated_movies_header"> Movies you have in common with {{ username }} </p>
+    <div class="rated_movies">
+        {% for poster, movie in poster2.items() %}
+        <div id="movie_poster">
+            <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+            <div class="card-body">
+                <h5 class="card-subtitle mb-2 text-body-secondary"> {{ movie[0] }}</h5>
+                <p class="card-text">Rated: {{ movie[2] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="rated_movies_div">
+    <p class="rated_movies_header"> Movies that {{ username }} have rated and you didn't </p>
+    <div class="rated_movies">
+        {% for poster, movie in posters.items() %}
+        <div id="movie_poster">
+            <a href="/movie?url_param={{ movie[0]|urlencode }}&url_param2={{ movie[1]|urlencode }}"><img class="img-fluid" src="{{ poster }}" alt="Poster"></a>
+            <div class="card-body">
+                <h5 class="card-subtitle mb-2 text-body-secondary"> {{ movie[0] }}</h5>
+                <p class="card-text">Rated: {{ movie[2] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

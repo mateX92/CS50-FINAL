@@ -94,6 +94,7 @@ footer p{
     font-size: 1.2em;
     padding-left: 10%;
     padding-bottom: 2%;
+    padding-top: 2%;
 }
 
 /* FORMS */
@@ -264,20 +265,35 @@ img{
     max-width: 50vh;
     height: auto;
 }
+
+.rated_movies_div{
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.rated_movies_div .rated_movies_header{
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: 700;
+    padding-top: 2%;
+}
  
-#rated_movies{
+.rated_movies{
     background-color: white;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
     padding: 2% 20% 2% 20%;
-
 }
 
 #movie_poster{
     max-width: 30%;
     height: auto;
     overflow: hidden; /* clip the excess when child gets bigger than parent */
+    margin-left: 0.5%;
+    margin-right: 0.5%;
 }
 
 #movie_poster img{
@@ -314,6 +330,52 @@ img{
 #points{
     text-align: left;
     font-weight: 700;
+}
+
+#user-data{
+    padding-top: 5%;
+    padding-bottom: 5%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#user-data h3{
+    font-size: 1.4em;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#user-details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    max-width: 30%;
+}
+
+#user-details p{
+    color:rgb(207, 207, 207);
+    font-size: 1.2em;
+    padding-top: 4%;
+}
+
+
+#chosen-genres{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+#user-details span{
+    background-color: #6ae382;
+    color: #1a1a1a;
+    border-radius: 25px;
+    padding: 3%;
+    margin: 0.5%;
+    margin-bottom: 2%;
 }
 
 /* MESSAGE */
@@ -420,32 +482,59 @@ img{
     padding-top: 2%;
 }
 
+#gender-description{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#your-description{
+    max-width: 40%;
+}
+
+#your-description input{
+    width: 80%;
+}
+
 #gender-div{
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-
+    max-width: 40%;
 }
 
-#genre-buttons{
+.genre-buttons{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: wrap;
 }
+
 .genre-button{
-    border: 1.5px solid #cfd356;
     border-radius: 25px;
     padding: 10px;
     margin: 0.5%;
-    color: #cfd356;
     transition: 0.3s;
-    background-color: #1a1a1a;
 }
 
-.genre-button:hover{
+.genre-btn-inactive{
+    border: 1.5px solid #cfd356;
+    background-color: #1a1a1a;
+    color: #cfd356;
+}
+
+.genre-btn-active{
+    border: none;
+    background-color: #6ae382;
+    color: #1a1a1a;
+}
+
+.genre-btn-inactive:hover{
     background-color: #292929;
     color: #e6e98d;
+}
+
+#genre-div{
 }
 
 /* MEDIA QUERY */
@@ -529,4 +618,11 @@ font-variation-settings:
     padding-left: 5%;
 }
 
+#user-data{
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }
+
+}
+

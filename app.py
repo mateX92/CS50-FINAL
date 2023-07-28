@@ -232,14 +232,36 @@ def person():
     username = request.args.get("url_param")
     posterdb = db.execute("SELECT poster, movie_title, description, rating FROM rating WHERE user_id IN (SELECT user_id FROM users WHERE username = ?) ORDER BY rating DESC", [username])
     posters = posterdb.fetchall()
+
+    userMovies = db.execute("SELECT poster, movie_title, description, rating FROM rating WHERE user_id = ? ORDER BY rating DESC", [session["user_id"]])
+    userMovies = userMovies.fetchall()
  
     # Create a dictionary with poster: title value pair in order to populate the poster and be able to click on it to get to the movie's page
     movies = {}
+    commonMovies = {}
+
+    # Assigning posters from userMovies to a variable to loop through them
+    userMoviesPosters = [row[0] for row in userMovies]
+
     for row in posters:
         poster, title, description, rating = row
-        movies[poster] = [title, description, rating]
-    
-    return render_template('person.html', username=username,posters=movies)
+        # if the same poster already exists in current's user db we add it to commonMovies
+        if poster in userMoviesPosters:
+            print(f'poster in userMovies: {poster}')
+            commonMovies[poster] = [title, description, rating]
+        else:
+        # otherwise its a movie the current user haven't rated
+            movies[poster] = [title, description, rating]      
+
+    # Fetch other information regarding the visited user
+    gender = db.execute("SELECT gender FROM users WHERE user_id IN (SELECT user_id FROM users WHERE username = ?)", [username]) 
+    gender = gender.fetchall()
+    description = db.execute("SELECT description FROM users WHERE user_id IN (SELECT user_id FROM users WHERE username = ?)", [username])
+    description = description.fetchall()
+    genres = db.execute("SELECT genre FROM genres WHERE user_id IN (SELECT user_id FROM users WHERE username = ?)", [username])
+    genres = genres.fetchall()
+
+    return render_template('person.html', username=username,posters=movies,poster2=commonMovies,gender=gender[0][0], description=description[0][0], genres=genres)
 
 @app.route('/message', methods=['POST', 'GET'])
 @login_required
@@ -269,7 +291,6 @@ def profile():
 
     if request.method == 'POST':
         if request.form.get('gender'):
-            print('gender actioned')
             db.execute("UPDATE users SET gender = ? WHERE user_id = ?", (request.form.get('gender'), session["user_id"]))
             db_con.commit()
         if request.form.get('description'):
@@ -300,5 +321,8 @@ def profile():
 
     GenresCheck = db.execute('SELECT genre FROM genres WHERE user_id = ?', [session["user_id"]])
     genres = GenresCheck.fetchall()
-      
-    return render_template('profile.html', gender=gender, description=description, genres=genres)
+    genre_list = [genre[0] for genre in genres]
+
+    allGenres = ['Action', 'Comedy', 'Drama', 'Fantasy', 'Sci-Fi', 'Horror', 'Mystery', 'Romance', 'Thriller', 'Western', 'Sports', 'Adventure']
+
+    return render_template('profile.html', gender=gender, description=description, genres=genre_list, allgenres=allGenres)
