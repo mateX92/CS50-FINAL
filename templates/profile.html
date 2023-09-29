@@ -5,49 +5,50 @@
 {% block main %}
 
 <div id="profile-page">
-    <div id="gender-description">
-        <div id="gender-div" class="profile-div">
-            <p class="profile-headers">1 Choose your gender</p>
+    <div id="profile_scroll">
+        <div class="profile-div" id="genre-div">
             <form method="post">
-                <select name="gender" id="gender">
-                    <option value="Female">Female</option>
-                    <option value="Male">Male</option>
-                    <option value="Transgender">Transgender</option>
-                    <option value="Non-binary/non-conforming">Non-binary/non-conforming</option>
-                    <option value="Prefer not to respond">Prefer not to respond</option>
-                </select> 
-                <button type="submit">Submit</button>
-            </form>
-            <p class="profile-text"> Gender: {{ gender }} </p>
-        </div>
-
-        <div id="your-description" class="profile-div">
-            <p class="profile-headers">2 Provide details about yourself for other users to read and get to know you better! </p>
-            <form method="post" name="description">
-                <input type="text" name="description">
-                <button type="submit">Submit</button>
-            </form>
-
-            <p class="profile-text"> {{ description }} </p>
-        </div>
-    </div>
-
-    <div class="profile-div" id="genre-div">
-        <form method="post">
-            <label for="genres" class="profile-headers">3 Select your favourite genres</label>
-            <div class="genre-buttons">
-                {% for row in allgenres %}
-                    {% if row not in genres%}
-                <button type="submit" name="genres" class="genre-button genre-btn-inactive" value="{{ row }}"><span>{{ row }}</span></button>
-                    {% endif %}
+                <label for="genres" class="profile-headers">1 Select your favourite genres</label>
+                <div class="genre-buttons">
+                    {% for row in allgenres %}
+                        {% if row not in genres%}
+                    <button type="submit" name="genres" class="genre-button genre-btn-inactive" value="{{ row }}"><span>{{ row }}</span></button>
+                        {% endif %}
+                    {% endfor %}
+                </div> 
+                <div class="genre-buttons">
+                {% for row in genres %}
+                    <button type="submit" name="genres" class="genre-button genre-btn-active" value="{{ row }}"> {{ row }} </button>
                 {% endfor %}
-            </div> 
-            <div class="genre-buttons">
-            {% for row in genres %}
-                <button type="submit" name="genres" class="genre-button genre-btn-active" value="{{ row }}"> {{ row }} </button>
-            {% endfor %}
+                </div>
+            </form>
+        </div>
+        <div id="gender-description">
+            <div id="gender-div" class="profile-div">
+                <p class="profile-headers">2 Choose your gender</p>
+                <form method="post">
+                    <select name="gender" id="gender">
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Transgender">Transgender</option>
+                        <option value="Non-binary/non-conforming">Non-binary/non-conforming</option>
+                        <option value="Prefer not to respond">Prefer not to respond</option>
+                    </select> 
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <p class="profile-text"> Gender chosen: <b> {{ gender }} </b></p>
             </div>
-        </form>
+
+            <div id="your-description" class="profile-div">
+                <p class="profile-headers">3 Provide details about yourself for other users to read and get to know you better! </p>
+                <form method="post" name="description">
+                    <input type="text" name="description">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+
+                <p class="profile-text"> Profile description: <i> {{ description }} </i> </p>
+            </div>
+        </div>
     </div>
 </div>
 

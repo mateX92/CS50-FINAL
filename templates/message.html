@@ -4,7 +4,7 @@
 
 {% block main %}
 
-<div id="chat">
+<!-- <div id="chat">
     <div id="scroll">
         {% for message in messages %}
             {% if session["user_id"] == message[0] %}
@@ -28,5 +28,48 @@
         <input type=submit value=Send class="btn btn-primary">
     </form>
 </div>
+-->
+
+<div id="chat">
+    <div id="scroll">
+        {% for message in messages %}
+            {% if session["user_id"] == message[0] %}
+                <div id="#chat_form"></div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <form method="post" class="forms" id="chat_form">
+        <input type="text" name="newMessage" placeholder="Write a message to {{ username }}" class="form-control" id="formGroupExampleInput">
+        <input type=submit value=Send class="btn btn-primary">
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#chat_form').submit(function(event) {
+            event.preventDefault();
+
+            var newMssg = $('#chat-text').val(); // Get the message only
+
+            $.ajax({
+                url: '/update_chat',
+                type: 'POST',
+                data: {name: newMssg}, // Sends new message to the server
+                success: function(data) {
+                    // 'data' is the json responde from update_chat
+                    $.each(data, function(index, item) {
+                        var messageData = '<div>' + item.username + '</div>' + item.message + '</div>' + item.date + '</div>'; 
+                        $('#chat-text').append(messageItem);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Error
+                }
+            })
+        })
+    })
+
+</script>
 
 {% endblock %}

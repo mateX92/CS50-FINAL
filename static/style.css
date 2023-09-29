@@ -460,11 +460,18 @@ img{
 /* PROFILE */
 
 #profile-page{
-    max-width: 90%;
-    margin: auto;
+    width: 100%;
+    height: 70vh;
+    overflow: hidden;
+    padding-left: 20%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+}
+
+#profile_scroll{
+    overflow-y: auto;
+    max-height: 100%;
 }
 
 .profile-div{
@@ -474,18 +481,14 @@ img{
 
 .profile-headers{
     color: white;
+    font-weight: 700;
+    font-size: 1.2em;
 }
 
 .profile-text{
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: rgb(196, 196, 196);
     padding-top: 2%;
-}
-
-#gender-description{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
 }
 
 #your-description{
@@ -493,7 +496,10 @@ img{
 }
 
 #your-description input{
-    width: 80%;
+    width: 100%;
+    padding: 1%;
+    margin-bottom: 1%;
+    box-sizing: border-box;
 }
 
 #gender-div{
@@ -503,11 +509,19 @@ img{
     max-width: 40%;
 }
 
+#gender{
+    padding: 1%;
+    background-color: white;
+    border-radius: 5px;
+    color: #acacac;
+}
+
 .genre-buttons{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: wrap;
+    margin-top: 1%;
 }
 
 .genre-button{
